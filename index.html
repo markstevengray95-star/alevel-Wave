@@ -10,7 +10,7 @@
   <title>AQA A-Level Physics Waves Learning Lab</title>
   <meta name="description" content="Interactive AQA A-level Physics 7408 Section 3.3 Waves learning lab with guided lessons, simulations, practicals, formula coaching and exam practice.">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=1">
+  <link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 <header class="topbar">
@@ -55,7 +55,7 @@
 
   <nav class="main-nav compact-nav" aria-label="Main navigation">
     <button class="nav-button active" data-view="course">Learn</button>
-    <button class="nav-button" data-view="lab">Simulations</button>
+    <button class="nav-button" data-view="textbook">Textbook</button>\n    <button class="nav-button" data-view="lab">Simulations</button>
     <button class="nav-button" data-view="practical">Practicals</button>
     <button class="nav-button" data-view="formula">Formula Coach</button>
     <button class="nav-button" data-view="exam">Exam Practice</button>
@@ -75,6 +75,25 @@
     <div class="course-layout">
       <div class="course-list" id="courseList"></div>
       <article class="panel lesson-panel" id="lessonPanel"></article>
+    </div>
+  </section>
+
+  <section class="view" id="view-textbook">
+    <div class="section-head">
+      <div><span class="eyebrow">Student textbook</span><h2>Waves: full AQA 7408 study text</h2></div>
+      <p class="muted">Eight detailed chapters with original diagrams, key equations, worked examples, specification checkpoints and exam-focused explanations.</p>
+    </div>
+    <div class="textbook-tools panel">
+      <label class="textbook-search"><span>Search textbook</span><input id="textbookSearch" type="search" placeholder="Try phase difference, diffraction, fibre optics..."></label>
+      <div class="pills">
+        <span class="pill">AQA 3.3.1</span>
+        <span class="pill">AQA 3.3.2</span>
+        <span class="pill">RP1 + RP2</span>
+      </div>
+    </div>
+    <div class="textbook-layout">
+      <aside class="textbook-toc panel" id="textbookToc"></aside>
+      <article class="textbook-reader panel" id="textbookReader"></article>
     </div>
   </section>
 
@@ -217,7 +236,9 @@
 </main>
 
 <footer class="wrap footer">A-Level Waves Learning Lab · AQA Physics 7408 Section 3.3 · Built from the Further Mechanics Learning Lab layout.</footer>
-<script src="waves-data.js?v=1"></script>
-<script src="app.js?v=1"></script>
+<script src="waves-data.js?v=2"></script>
+<script src="textbook-data.js?v=1"></script>
+<script src="app.js?v=2"></script>
+<script src="textbook.js?v=1"></script>
 </body>
 </html>
