@@ -192,7 +192,7 @@ window.WAVES_DATA = {
     {id:"grating",name:"Diffraction grating angle",eq:"d sinθ = nλ",fields:[["d","Grating spacing d / m"],["n","Order n"],["lambda","Wavelength λ / m"]],calc:v=>{const x=v.n*v.lambda/v.d; return x>1?{error:"No physical diffraction order: nλ > d."}:{answer:Math.asin(x)*180/Math.PI,unit:"°",steps:[`sinθ = nλ/d`,`sinθ = ${v.n} × ${v.lambda} / ${v.d}`]}}},
     {id:"refractive",name:"Refractive index from speed",eq:"n = c/v",fields:[["v","Speed in material / m s⁻¹"]],calc:v=>({answer:299792458/v.v,unit:"",steps:[`n = c/v`,`n = 2.998×10⁸ / ${v.v}`]})},
     {id:"snell",name:"Snell's law: transmitted angle",eq:"n₁sinθ₁ = n₂sinθ₂",fields:[["n1","n₁"],["theta1","θ₁ / degrees"],["n2","n₂"]],calc:v=>{const x=v.n1*Math.sin(v.theta1*Math.PI/180)/v.n2; return Math.abs(x)>1?{error:"No refracted ray: conditions correspond to total internal reflection."}:{answer:Math.asin(x)*180/Math.PI,unit:"°",steps:[`sinθ₂ = n₁sinθ₁/n₂`,`sinθ₂ = ${v.n1} × sin(${v.theta1}°) / ${v.n2}`]}}},
-    {id:"critical",name:"Critical angle",eq:"sinθc = n₂/n₁",fields:[["n1","Higher refractive index n₁"],["n2","Lower refractive index n₂"]],calc:v=>v.n2>=v.n1?{error:"For this form, n₁ must be greater than n₂."}:{answer:Math.asin(v.n2/v.n1)*180/Math.PI,unit:"°",steps:[`sinθc = n₂/n₁`,`sinθc = ${v.n2}/${v.n1}`]})}
+    {id:"critical",name:"Critical angle",eq:"sinθc = n₂/n₁",fields:[["n1","Higher refractive index n₁"],["n2","Lower refractive index n₂"]],calc:v=>v.n2>=v.n1?{error:"For this form, n₁ must be greater than n₂."}:{answer:Math.asin(v.n2/v.n1)*180/Math.PI,unit:"°",steps:[`sinθc = n₂/n₁`,`sinθc = ${v.n2}/${v.n1}`]}}
   ],
 
   quiz:[
