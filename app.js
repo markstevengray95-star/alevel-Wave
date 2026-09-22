@@ -63,7 +63,7 @@
         <span class="course-title">${l.title}</span>
       </button>`).join("");
     host.querySelectorAll("[data-lesson]").forEach(b=>b.addEventListener("click",()=>{
-      state.lessonId=b.dataset.lesson; renderCourse(); renderLesson();
+      state.lessonId=b.dataset.lesson; state.lessonStep=0; renderCourse(); renderLesson();
     }));
   }
 
@@ -79,53 +79,141 @@
     const l=D.lessons.find(x=>x.id===state.lessonId) || D.lessons[0];
     const idx=D.lessons.indexOf(l);
     const quick=l.quick;
+    if(!Number.isInteger(state.lessonStep)) state.lessonStep=0;
+    state.lessonStep=Math.max(0,Math.min(5,state.lessonStep));
+
+    const mid=Math.ceil(l.sections.length/2);
+    const firstSections=l.sections.slice(0,mid);
+    const secondSections=l.sections.slice(mid);
+    const sectionHtml=s=>`<div class="lesson-content-card">
+      <h3>${s.h}</h3>
+      <p>${s.p}</p>
+      ${s.eq?`<div class="equation">${s.eq}</div>`:""}
+      ${s.callout?`<div class="lesson-callout">${s.callout}</div>`:""}
+    </div>`;
+    const equations=[...new Set(l.sections.filter(s=>s.eq).map(s=>s.eq))];
+    const steps=[
+      ["Launch","Objectives + retrieval"],
+      ["Learn","Core ideas"],
+      ["Develop","Build the model"],
+      ["Apply","Equations + practice"],
+      ["Explore","Simulation + exam thinking"],
+      ["Check","Knowledge check + exit"]
+    ];
+
     $("#lessonPanel").innerHTML=`
-      <div class="lesson-kicker"><span class="eyebrow">${l.code}</span><span class="pill">Lesson ${idx+1} of ${D.lessons.length}</span></div>
+      <div class="lesson-kicker">
+        <span class="eyebrow">${l.code}</span>
+        <span class="pill">Lesson ${idx+1} of ${D.lessons.length}</span>
+        <span class="pill">Step ${state.lessonStep+1} of 6</span>
+      </div>
       <h2>${l.title}</h2>
       <p class="lesson-lead">${l.lead}</p>
-      <div class="lesson-section">
-        <h3>Learning objectives</h3>
-        <ul class="lesson-objectives">${l.objectives.map(x=>`<li>${x}</li>`).join("")}</ul>
+
+      <div class="lesson-path" aria-label="Lesson sequence">
+        ${steps.map((s,i)=>`<button class="lesson-path-step ${i===state.lessonStep?"active":""} ${i<state.lessonStep?"visited":""}" data-lesson-step="${i}">
+          <span class="lesson-path-number">${i+1}</span><span><strong>${s[0]}</strong><small>${s[1]}</small></span>
+        </button>`).join("")}
       </div>
-      <div class="lesson-section">
-        <h3>Starter retrieval</h3>
-        <ol>${l.retrieval.map(x=>`<li>${x}</li>`).join("")}</ol>
-        <button class="text-button" id="revealRetrieval">Show guidance</button>
-        <div id="retrievalGuidance" class="answer-reveal">Say the answer aloud or write it first. Then use the lesson sections below to correct any uncertain definitions before continuing.</div>
+
+      <div class="lesson-chunk ${state.lessonStep===0?"active":""}" data-chunk="0">
+        <div class="lesson-stage-head"><span class="eyebrow">1 · Launch</span><h3>Know where you are going</h3><p>Start with the goal, activate prior knowledge, then identify anything you need to revisit.</p></div>
+        <div class="lesson-grid">
+          <div class="lesson-block remember"><h3>Learning objectives</h3><ul>${l.objectives.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+          <div class="lesson-block"><h3>Starter retrieval</h3><ol>${l.retrieval.map(x=>`<li>${x}</li>`).join("")}</ol>
+            <textarea class="student-answer" id="retrievalNotes" placeholder="Write brief answers before revealing the guidance..."></textarea>
+            <button class="text-button" id="revealRetrieval">Show retrieval guidance</button>
+            <div id="retrievalGuidance" class="answer-reveal">Answer from memory first. Use precise definitions and SI units. Any uncertain term should become a target as you work through the next chunks.</div>
+          </div>
+        </div>
       </div>
-      ${l.sections.map(s=>`<div class="lesson-section"><h3>${s.h}</h3><p>${s.p}</p>${s.eq?`<div class="equation">${s.eq}</div>`:""}${s.callout?`<div class="lesson-callout">${s.callout}</div>`:""}</div>`).join("")}
-      <div class="lesson-section">
-        <h3>Quick check</h3>
-        <p><strong>${quick.q}</strong></p>
-        <div class="mini-options">${quick.a.map((a,i)=>`<button class="mini-option" data-qopt="${i}">${a}</button>`).join("")}</div>
-        <div id="quickWhy" class="answer-reveal"></div>
+
+      <div class="lesson-chunk ${state.lessonStep===1?"active":""}" data-chunk="1">
+        <div class="lesson-stage-head"><span class="eyebrow">2 · Learn</span><h3>Build the first part of the model</h3><p>Read one idea at a time. After each card, explain it aloud without looking back.</p></div>
+        <div class="lesson-content-stack">${firstSections.map(sectionHtml).join("")}</div>
+        <div class="lesson-task"><strong>Stop and explain:</strong> Write a three-sentence explanation of the main idea so far, using the lesson vocabulary accurately.
+          <textarea class="student-answer" placeholder="Your explanation..."></textarea>
+        </div>
       </div>
-      <div class="lesson-actions">
-        <button class="button primary" id="openLessonSim">Open linked simulation</button>
-        <button class="button ${state.progress.has(l.id)?"primary":""}" id="markLesson">${state.progress.has(l.id)?"Completed ✓":"Mark lesson complete"}</button>
+
+      <div class="lesson-chunk ${state.lessonStep===2?"active":""}" data-chunk="2">
+        <div class="lesson-stage-head"><span class="eyebrow">3 · Develop</span><h3>Connect and extend the physics</h3><p>Now link the ideas together and focus on the cause-and-effect reasoning that earns explanation marks.</p></div>
+        <div class="lesson-content-stack">${secondSections.map(sectionHtml).join("")}</div>
+        <div class="lesson-task"><strong>Connect the ideas:</strong> Identify one variable you could change and predict what would happen to the relevant wave quantity. Give the physics reason, not just the trend.
+          <textarea class="student-answer" placeholder="Prediction + physics reason..."></textarea>
+        </div>
+      </div>
+
+      <div class="lesson-chunk ${state.lessonStep===3?"active":""}" data-chunk="3">
+        <div class="lesson-stage-head"><span class="eyebrow">4 · Apply</span><h3>Turn the physics into calculations</h3><p>Choose the relationship, convert units first, substitute clearly and finish with a unit and sensible significant figures.</p></div>
+        <div class="lesson-grid">
+          <div class="lesson-block worked-block"><h3>Equations used in this lesson</h3>
+            ${equations.length?equations.map(eq=>`<span class="formula-chip">${eq}</span>`).join(""):'<p>This lesson is mainly qualitative: focus on precise physical explanations.</p>'}
+          </div>
+          <div class="lesson-block warning"><h3>Calculation routine</h3><ol><li>Write the relationship.</li><li>Convert to SI units.</li><li>Rearrange before inserting numbers where possible.</li><li>Substitute with units.</li><li>Check magnitude and significant figures.</li></ol></div>
+        </div>
+        <div class="lesson-task"><strong>Practice:</strong> Create your own numerical example using one equation above, solve it, then change one input and predict how the answer changes.
+          <textarea class="student-answer" placeholder="Equation, values, working and prediction..."></textarea>
+        </div>
+      </div>
+
+      <div class="lesson-chunk ${state.lessonStep===4?"active":""}" data-chunk="4">
+        <div class="lesson-stage-head"><span class="eyebrow">5 · Explore</span><h3>Use the simulation as evidence</h3><p>Do not just move sliders. Make a prediction, change one variable, record the observation and then explain it using the model and equation.</p></div>
+        <div class="lesson-grid">
+          <div class="lesson-block checkpoint-box"><h3>Simulation mission</h3><ol><li>Predict the effect of one control.</li><li>Open the linked model.</li><li>Change one variable only.</li><li>Capture or record a reading.</li><li>Explain whether the evidence supports your prediction.</li></ol><button class="button primary" id="openLessonSim">Open linked simulation</button></div>
+          <div class="lesson-block"><h3>AQA explanation builder</h3><p>Use this order for longer responses: <strong>state the physics principle → apply it to the situation → describe the resulting change → link back to the observation.</strong></p>
+            <textarea class="student-answer" placeholder="Write a short exam-style explanation using that structure..."></textarea>
+          </div>
+        </div>
+        <button class="button" id="openLessonTextbook">Open full textbook chapter</button>
+      </div>
+
+      <div class="lesson-chunk ${state.lessonStep===5?"active":""}" data-chunk="5">
+        <div class="lesson-stage-head"><span class="eyebrow">6 · Check</span><h3>Prove the lesson is secure</h3><p>Complete the knowledge check, then write an exit response before marking the lesson complete.</p></div>
+        <div class="lesson-section">
+          <h3>Quick check</h3>
+          <p><strong>${quick.q}</strong></p>
+          <div class="mini-options">${quick.a.map((a,i)=>`<button class="mini-option" data-qopt="${i}">${a}</button>`).join("")}</div>
+          <div id="quickWhy" class="answer-reveal"></div>
+        </div>
+        <div class="lesson-task"><strong>Exit ticket:</strong> Write the one idea, equation or explanation from this lesson that would be most useful in an exam, then give one common mistake to avoid.
+          <textarea class="student-answer" placeholder="Most useful idea + mistake to avoid..."></textarea>
+        </div>
+        <div class="lesson-actions">
+          <button class="button ${state.progress.has(l.id)?"primary":""}" id="markLesson">${state.progress.has(l.id)?"Completed ✓":"Mark lesson complete"}</button>
+        </div>
+      </div>
+
+      <div class="lesson-step-nav">
+        <button class="button" id="lessonStepBack" ${state.lessonStep===0?"disabled":""}>← Previous step</button>
+        <span class="muted small">Work through the lesson in order, or use the sequence above to revisit a chunk.</span>
+        <button class="button primary" id="lessonStepNext" ${state.lessonStep===5?"disabled":""}>Next step →</button>
       </div>
       <div class="lesson-nav-row">
-        <button class="button" id="prevLesson" ${idx===0?"disabled":""}>← Previous</button>
-        <button class="button" id="nextLesson" ${idx===D.lessons.length-1?"disabled":""}>Next →</button>
+        <button class="button" id="prevLesson" ${idx===0?"disabled":""}>← Previous lesson</button>
+        <button class="button" id="nextLesson" ${idx===D.lessons.length-1?"disabled":""}>Next lesson →</button>
       </div>`;
 
-    $("#revealRetrieval").addEventListener("click",()=>$("#retrievalGuidance").classList.toggle("visible"));
+    $("#lessonPanel").querySelectorAll("[data-lesson-step]").forEach(b=>b.addEventListener("click",()=>{state.lessonStep=Number(b.dataset.lessonStep);renderLesson();}));
+    $("#lessonStepBack")?.addEventListener("click",()=>{if(state.lessonStep>0){state.lessonStep--;renderLesson();}});
+    $("#lessonStepNext")?.addEventListener("click",()=>{if(state.lessonStep<5){state.lessonStep++;renderLesson();}});
+    $("#revealRetrieval")?.addEventListener("click",()=>$("#retrievalGuidance")?.classList.toggle("visible"));
+
     $("#lessonPanel").querySelectorAll("[data-qopt]").forEach(b=>b.addEventListener("click",()=>{
       const chosen=Number(b.dataset.qopt);
       $("#lessonPanel").querySelectorAll("[data-qopt]").forEach(x=>x.disabled=true);
       b.classList.add(chosen===quick.correct?"correct":"wrong");
-      const c=$("#lessonPanel").querySelector(`[data-qopt="${quick.correct}"]`); if(c)c.classList.add("correct");
-      const why=$("#quickWhy"); why.textContent=quick.why; why.classList.add("visible");
+      const correct=$("#lessonPanel").querySelector(`[data-qopt="${quick.correct}"]`); if(correct)correct.classList.add("correct");
+      const why=$("#quickWhy"); if(why){why.textContent=quick.why;why.classList.add("visible");}
     }));
-    $("#markLesson").addEventListener("click",()=>{
-      state.progress.add(l.id); saveProgress(); renderCourse(); renderLesson();
+    $("#markLesson")?.addEventListener("click",()=>{state.progress.add(l.id);saveProgress();renderCourse();renderLesson();});
+    $("#openLessonSim")?.addEventListener("click",()=>{state.returnLesson=l.id;loadSim(l.sim);switchView("lab");$("#backToLesson").classList.remove("hidden");});
+    $("#openLessonTextbook")?.addEventListener("click",()=>{
+      switchView("textbook");
+      if(window.openWavesTextbookChapter) window.openWavesTextbookChapter(l.code);
     });
-    $("#openLessonSim").addEventListener("click",()=>{
-      state.returnLesson=l.id; loadSim(l.sim); switchView("lab");
-      $("#backToLesson").classList.remove("hidden");
-    });
-    $("#prevLesson").addEventListener("click",()=>{if(idx>0){state.lessonId=D.lessons[idx-1].id;renderCourse();renderLesson();}});
-    $("#nextLesson").addEventListener("click",()=>{if(idx<D.lessons.length-1){state.lessonId=D.lessons[idx+1].id;renderCourse();renderLesson();}});
+    $("#prevLesson")?.addEventListener("click",()=>{if(idx>0){state.lessonId=D.lessons[idx-1].id;state.lessonStep=0;renderCourse();renderLesson();}});
+    $("#nextLesson")?.addEventListener("click",()=>{if(idx<D.lessons.length-1){state.lessonId=D.lessons[idx+1].id;state.lessonStep=0;renderCourse();renderLesson();}});
   }
 
   // ---------- Simulation lab ----------
