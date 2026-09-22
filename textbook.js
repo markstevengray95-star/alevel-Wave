@@ -122,6 +122,15 @@
     next.onclick=()=>{if(idx<chapters.length-1){activeId=chapters[idx+1].id;renderToc(search?.value||"");renderReader();reader.scrollIntoView({behavior:"smooth",block:"start"});}};
   }
 
+  window.openWavesTextbookChapter = code => {
+    const map = [
+      ["3.3.1.1","progressive"],["3.3.1.2","types"],["3.3.1.3","stationary"],
+      ["3.3.2.1","interference"],["3.3.2.2","diffraction"],["3.3.2.3","refraction"],
+      ["RP1","practicals"],["RP2","practicals"]
+    ];
+    const hit = map.find(([prefix])=>String(code).includes(prefix));
+    if(hit){activeId=hit[1];renderToc("");renderReader();}
+  };
   search?.addEventListener("input",()=>renderToc(search.value.trim()));
   renderToc();
   renderReader();
