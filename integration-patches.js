@@ -56,12 +56,15 @@
   }
 
   function loadDetailUpgrades(){
-    if(!document.querySelector('link[href^="detail-upgrades.css"]')){
-      const link=document.createElement("link");link.rel="stylesheet";link.href="detail-upgrades.css?v=2";document.head.appendChild(link);
-    }
+    const addCss=(href,id)=>{if(document.getElementById(id)||document.querySelector(`link[href^='${href}']`))return;const link=document.createElement("link");link.id=id;link.rel="stylesheet";link.href=href;document.head.appendChild(link);};
+    addCss("detail-upgrades.css?v=2","detailUpgradeCss");
+    addCss("course-upgrades-v3.css?v=3","courseUpgradeCss");
     const load=(src,id)=>{if(document.getElementById(id))return;const s=document.createElement("script");s.src=src;s.id=id;s.defer=true;document.body.appendChild(s);};
     load("textbook-expansion.js?v=2","textbookExpansionScript");
     load("simulation-upgrades-v2.js?v=2","simulationUpgradeScript");
+    load("simulation-upgrades-v3.js?v=3","simulationUpgradeV3Script");
+    load("textbook-interactives-v3.js?v=3","textbookInteractiveV3Script");
+    load("question-engine-v3.js?v=3","questionEngineV3Script");
   }
 
   function init(){addPracticalLinks();addSimulationBridge();addTeacherSimulationShortcuts();addMeasurementGuide();observeDynamic();enhanceInterferenceContext();loadDetailUpgrades();}
