@@ -1,4 +1,4 @@
-const CACHE="waves-lab-v10";
+const CACHE="waves-lab-v11";
 const ASSETS=[
   "./","./index.html","./styles.css","./advanced-features.css","./detail-upgrades.css","./course-upgrades-v3.css","./extended-response-v4.css","./learning-upgrades-v5.css","./learning-v6.css","./visual-polish-v7.css","./simulation-hud-v7.css","./waves-data.js","./textbook-data.js","./app.js","./textbook.js","./advanced-features.js","./integration-patches.js","./textbook-expansion.js","./simulation-upgrades-v2.js","./simulation-upgrades-v3.js","./simulation-upgrades-v4.js","./simulation-performance-v6.js","./simulation-visuals-v7.js","./textbook-interactives-v3.js","./question-engine-v3.js","./extended-response-v4.js","./topic-end-practice-v5.js","./equation-coach-v6.js","./learning-depth-v6.js","./lesson-expansion-v7.js","./physics-icon.svg","./manifest.webmanifest"
 ];
