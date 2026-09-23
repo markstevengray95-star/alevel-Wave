@@ -1,0 +1,60 @@
+(()=>{
+  "use strict";
+  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const clickView=id=>document.querySelector(`[data-view='${id}']`)?.click();
+  const openStudio=mode=>{clickView("studio");setTimeout(()=>document.querySelector(`[data-studio='${mode}']`)?.click(),80);};
+  const openSim=id=>{clickView("lab");setTimeout(()=>document.querySelector(`[data-sim='${id}']`)?.click(),80);};
+
+  function addPracticalLinks(){
+    const sw=$(".practical-switch");if(!sw||$("#openResonanceStudio"))return;
+    sw.insertAdjacentHTML("beforeend",'<button class="button" id="openResonanceStudio">Advanced RP1 · Resonance finder</button><button class="button" id="openYoungStudio">Advanced RP2 · Fringe measurement</button><button class="button" id="openGratingStudio">Advanced RP2 · Spectrometer</button>');
+    $("#openResonanceStudio").onclick=()=>openStudio("resonance");
+    $("#openYoungStudio").onclick=()=>openStudio("young");
+    $("#openGratingStudio").onclick=()=>openStudio("spectrometer");
+  }
+
+  function addSimulationBridge(){
+    const side=$(".lab-side");if(!side||$("#advancedLabBridge"))return;
+    side.insertAdjacentHTML("beforeend",'<article class="panel learning-box checkpoint-box" id="advancedLabBridge"><h3>Take it further</h3><p>Switch from demonstration mode to a measurement-led investigation with draggable instruments, oscilloscope traces and hidden-answer missions.</p><button class="button primary" id="openMatchingAdvanced">Open matching Advanced Studio lab</button></article>');
+    $("#openMatchingAdvanced").onclick=()=>{
+      const id=$(".sim-tab.active")?.dataset.sim||"progressive";
+      const map={progressive:"measure",polarisation:"measure",standing:"resonance",interference:"interference",doubleSlit:"young",diffraction:"diffraction",grating:"spectrometer",refraction:"measure",fibre:"fibre"};
+      openStudio(map[id]||"measure");
+    };
+  }
+
+  function addTeacherSimulationShortcuts(){
+    const drawer=$("#teacherDrawer");if(!drawer||$("#teacherSimShortcuts"))return;
+    const shareTitle=$$("h3",drawer).find(x=>x.textContent.includes("Share this point"));
+    const block=document.createElement("div");block.id="teacherSimShortcuts";block.innerHTML='<h3>Simulation shortcuts</h3><div class="teacher-shortcuts"><button class="button" data-teacher-sim="progressive">Progressive</button><button class="button" data-teacher-sim="standing">Standing</button><button class="button" data-teacher-sim="doubleSlit">Young</button><button class="button" data-teacher-sim="grating">Grating</button><button class="button" data-teacher-sim="refraction">Refraction</button><button class="button" data-teacher-sim="fibre">Fibre</button></div>';
+    if(shareTitle)drawer.insertBefore(block,shareTitle);else drawer.appendChild(block);
+    $$('[data-teacher-sim]',block).forEach(b=>b.onclick=()=>{openSim(b.dataset.teacherSim);drawer.classList.remove("open");});
+  }
+
+  const contexts={
+    water:{label:"Water waves",note:"Treat the drawn spacing as centimetre-scale wavefronts. Move the detector to map maxima and minima."},
+    sound:{label:"Sound",note:"Interpret the sources as coherent loudspeakers. Detector intensity represents loud and quiet positions."},
+    microwave:{label:"Microwaves",note:"Interpret the sources as coherent microwave emitters. Path difference still controls maxima and minima."},
+    light:{label:"Light",note:"Interpret the sources as coherent optical paths. The geometry is rescaled, but the phase and path-difference rules are unchanged."}
+  };
+  function enhanceInterferenceContext(){
+    const body=$("#studioBody");if(!body)return;
+    const active=$("[data-studio='interference'].active");if(!active||$("#interferenceContext",body))return;
+    const controls=$(".studio-controls",body);if(!controls)return;
+    controls.insertAdjacentHTML("afterbegin",`<label class="field" id="interferenceContext"><span>Wave context</span><select id="waveContextSelect">${Object.entries(contexts).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join("")}</select><small class="muted" id="waveContextNote">${contexts.water.note}</small></label>`);
+    $("#waveContextSelect").onchange=e=>{$("#waveContextNote").textContent=contexts[e.target.value].note;};
+  }
+
+  function addMeasurementGuide(){
+    const tools=$(".measure-tools");if(!tools||$("#measurementGuide"))return;
+    tools.insertAdjacentHTML("beforeend",'<span class="mini-badge" id="measurementGuide">A–B ruler · angle tool · phase marker</span>');
+  }
+
+  function observeDynamic(){
+    const body=$("#studioBody");if(body)new MutationObserver(()=>enhanceInterferenceContext()).observe(body,{childList:true,subtree:true});
+    const drawer=$("#teacherDrawer");if(drawer)new MutationObserver(()=>addTeacherSimulationShortcuts()).observe(drawer,{childList:true,subtree:false});
+  }
+
+  function init(){addPracticalLinks();addSimulationBridge();addTeacherSimulationShortcuts();addMeasurementGuide();observeDynamic();enhanceInterferenceContext();}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>setTimeout(init,100));else setTimeout(init,100);
+})();
