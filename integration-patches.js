@@ -77,7 +77,7 @@
     load("learning-depth-v6.js?v=6","learningDepthV6Script");
     load("simulation-performance-v6.js?v=7","simulationPerformanceV6Script");
     load("lesson-expansion-v7.js?v=7","lessonExpansionV7Script");
-    load("simulation-visuals-v7.js?v=7","simulationVisualsV7Script");
+    load("simulation-visuals-v7.js?v=8","simulationVisualsV7Script");
   }
 
   function init(){addPracticalLinks();addSimulationBridge();addTeacherSimulationShortcuts();addMeasurementGuide();observeDynamic();enhanceInterferenceContext();loadDetailUpgrades();}
