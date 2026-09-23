@@ -1,0 +1,32 @@
+name: Validate Waves App
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Check JavaScript syntax
+        run: |
+          node --check app.js
+          node --check waves-data.js
+          node --check textbook.js
+          node --check textbook-data.js
+          node --check advanced-features.js
+          node --check integration-patches.js
+          node --check sw.js
+      - name: Check required app files
+        run: |
+          test -f index.html
+          test -f styles.css
+          test -f advanced-features.css
+          test -f manifest.webmanifest
