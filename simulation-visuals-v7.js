@@ -12,19 +12,34 @@
     refraction:{watch:"Use the normal, ray direction and wavefront spacing together. Frequency remains unchanged across the boundary.",measure:"Increase incidence angle until the refracted ray approaches 90°, then identify the critical condition.",equation:"n₁ sinθ₁ = n₂ sinθ₂",accent:"#6ed3ff"},
     fibre:{watch:"Separate ray guidance from pulse broadening and attenuation. They are related to different physical processes.",measure:"Change one dispersion effect at a time and compare output pulse width and amplitude.",equation:"TIR guides · dispersion broadens · absorption attenuates",accent:"#62dda4"}
   };
+
   function simId(){return $("#simTabs .sim-tab.active")?.dataset.sim||"progressive";}
+
   function ensure(){
-    const wrap=$(".viewer-wrap");if(!wrap||$("#simVisualHudV7"))return;
-    wrap.insertAdjacentHTML("afterend",`<div class="sim-visual-hud-v7" id="simVisualHudV7"><div class="sim-hud-head"><span class="eyebrow">Visual guide</span><strong id="simHudEquation"></strong></div><div class="sim-hud-grid"><div><span class="sim-hud-dot watch"></span><strong>Watch</strong><p id="simHudWatch"></p></div><div><span class="sim-hud-dot measure"></span><strong>Measure</strong><p id="simHudMeasure"></p></div></div></div>`);
-    update();
+    if($("#simVisualHudV7"))return true;
+    const wrap=$(".viewer-wrap");
+    if(!wrap)return false;
+    wrap.insertAdjacentHTML("afterend",'<div class="sim-visual-hud-v7" id="simVisualHudV7"><div class="sim-hud-head"><span class="eyebrow">Visual guide</span><strong id="simHudEquation"></strong></div><div class="sim-hud-grid"><div><span class="sim-hud-dot watch"></span><strong>Watch</strong><p id="simHudWatch"></p></div><div><span class="sim-hud-dot measure"></span><strong>Measure</strong><p id="simHudMeasure"></p></div></div></div>');
+    return true;
   }
+
   function update(){
-    ensure();const m=META[simId()]||META.progressive, hud=$("#simVisualHudV7");if(!hud)return;
-    hud.style.setProperty("--sim-accent",m.accent);$("#simHudEquation").textContent=m.equation;$("#simHudWatch").textContent=m.watch;$("#simHudMeasure").textContent=m.measure;
+    if(!ensure())return;
+    const m=META[simId()]||META.progressive;
+    const hud=$("#simVisualHudV7"),eq=$("#simHudEquation"),watch=$("#simHudWatch"),measure=$("#simHudMeasure");
+    if(!hud||!eq||!watch||!measure)return;
+    hud.style.setProperty("--sim-accent",m.accent);
+    if(eq.textContent!==m.equation)eq.textContent=m.equation;
+    if(watch.textContent!==m.watch)watch.textContent=m.watch;
+    if(measure.textContent!==m.measure)measure.textContent=m.measure;
   }
+
   function bind(){
-    ensure();$("#simTabs")?.addEventListener("click",()=>setTimeout(update,30));
-    new MutationObserver(()=>requestAnimationFrame(update)).observe(document.body,{childList:true,subtree:true});
+    update();
+    $("#simTabs")?.addEventListener("click",()=>setTimeout(update,60));
+    document.querySelector('[data-view="lab"]')?.addEventListener("click",()=>setTimeout(update,80));
   }
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>setTimeout(bind,250));else setTimeout(bind,250);
+
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bind,{once:true});
+  else bind();
 })();
