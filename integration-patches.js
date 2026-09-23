@@ -60,13 +60,16 @@
     addCss("detail-upgrades.css?v=2","detailUpgradeCss");
     addCss("course-upgrades-v3.css?v=3","courseUpgradeCss");
     addCss("extended-response-v4.css?v=4","extendedResponseCss");
+    addCss("learning-upgrades-v5.css?v=5","learningUpgradeV5Css");
     const load=(src,id)=>{if(document.getElementById(id))return;const s=document.createElement("script");s.src=src;s.id=id;s.defer=true;document.body.appendChild(s);};
     load("textbook-expansion.js?v=2","textbookExpansionScript");
     load("simulation-upgrades-v2.js?v=2","simulationUpgradeScript");
     load("simulation-upgrades-v3.js?v=3","simulationUpgradeV3Script");
+    load("simulation-upgrades-v4.js?v=4","simulationUpgradeV4Script");
     load("textbook-interactives-v3.js?v=3","textbookInteractiveV3Script");
     load("question-engine-v3.js?v=3","questionEngineV3Script");
     load("extended-response-v4.js?v=4","extendedResponseV4Script");
+    load("topic-end-practice-v5.js?v=5","topicEndPracticeV5Script");
   }
 
   function init(){addPracticalLinks();addSimulationBridge();addTeacherSimulationShortcuts();addMeasurementGuide();observeDynamic();enhanceInterferenceContext();loadDetailUpgrades();}
