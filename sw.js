@@ -1,6 +1,6 @@
-const CACHE="waves-lab-v8";
+const CACHE="waves-lab-v9";
 const ASSETS=[
-  "./","./index.html","./styles.css","./advanced-features.css","./detail-upgrades.css","./course-upgrades-v3.css","./extended-response-v4.css","./learning-upgrades-v5.css","./waves-data.js","./textbook-data.js","./app.js","./textbook.js","./advanced-features.js","./integration-patches.js","./textbook-expansion.js","./simulation-upgrades-v2.js","./simulation-upgrades-v3.js","./simulation-upgrades-v4.js","./textbook-interactives-v3.js","./question-engine-v3.js","./extended-response-v4.js","./topic-end-practice-v5.js","./physics-icon.svg","./manifest.webmanifest"
+  "./","./index.html","./styles.css","./advanced-features.css","./detail-upgrades.css","./course-upgrades-v3.css","./extended-response-v4.css","./learning-upgrades-v5.css","./learning-v6.css","./waves-data.js","./textbook-data.js","./app.js","./textbook.js","./advanced-features.js","./integration-patches.js","./textbook-expansion.js","./simulation-upgrades-v2.js","./simulation-upgrades-v3.js","./simulation-upgrades-v4.js","./simulation-performance-v6.js","./textbook-interactives-v3.js","./question-engine-v3.js","./extended-response-v4.js","./topic-end-practice-v5.js","./equation-coach-v6.js","./learning-depth-v6.js","./physics-icon.svg","./manifest.webmanifest"
 ];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
