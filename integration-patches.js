@@ -55,6 +55,15 @@
     const drawer=$("#teacherDrawer");if(drawer)new MutationObserver(()=>addTeacherSimulationShortcuts()).observe(drawer,{childList:true,subtree:false});
   }
 
-  function init(){addPracticalLinks();addSimulationBridge();addTeacherSimulationShortcuts();addMeasurementGuide();observeDynamic();enhanceInterferenceContext();}
+  function loadDetailUpgrades(){
+    if(!document.querySelector('link[href^="detail-upgrades.css"]')){
+      const link=document.createElement("link");link.rel="stylesheet";link.href="detail-upgrades.css?v=2";document.head.appendChild(link);
+    }
+    const load=(src,id)=>{if(document.getElementById(id))return;const s=document.createElement("script");s.src=src;s.id=id;s.defer=true;document.body.appendChild(s);};
+    load("textbook-expansion.js?v=2","textbookExpansionScript");
+    load("simulation-upgrades-v2.js?v=2","simulationUpgradeScript");
+  }
+
+  function init(){addPracticalLinks();addSimulationBridge();addTeacherSimulationShortcuts();addMeasurementGuide();observeDynamic();enhanceInterferenceContext();loadDetailUpgrades();}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>setTimeout(init,100));else setTimeout(init,100);
 })();
