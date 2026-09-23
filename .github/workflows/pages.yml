@@ -10,9 +10,12 @@ permissions:
   pages: write
   id-token: write
 
+# Queue Pages publishes instead of cancelling an in-flight deployment.
+# GitHub Pages can keep a deployment active briefly after a workflow cancel,
+# which otherwise causes the next publish to fail with a deployment conflict.
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
