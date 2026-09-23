@@ -7,9 +7,10 @@
 
   const studioIsFibre=()=>!!document.querySelector("[data-studio='fibre'].active");
   const ctl=name=>document.querySelector(`#studioBody [data-studio-control='${name}']`);
+  const toggle=name=>name==="modal"?$("#modalToggle"):name==="material"?$("#materialToggle"):null;
   const num=(name,fallback)=>{const e=ctl(name),n=Number(e?.value);return Number.isFinite(n)?n:fallback;};
-  const enabled=(name,fallback=true)=>{const e=ctl(name);if(!e)return fallback;return e.type==="checkbox"?e.checked:Number(e.value)!==0;};
-  const setCtl=(name,value)=>{const e=ctl(name);if(!e)return;if(e.type==="checkbox")e.checked=!!value;else e.value=value;e.dispatchEvent(new Event("input",{bubbles:true}));e.dispatchEvent(new Event("change",{bubbles:true}));};
+  const enabled=(name,fallback=true)=>{const e=toggle(name)||ctl(name);if(!e)return fallback;return e.type==="checkbox"?e.checked:Number(e.value)!==0;};
+  const setCtl=(name,value)=>{const e=toggle(name)||ctl(name);if(!e)return;if(e.type==="checkbox")e.checked=!!value;else e.value=value;e.dispatchEvent(new Event("input",{bubbles:true}));e.dispatchEvent(new Event("change",{bubbles:true}));};
 
   function model(){
     const lengthM=Math.max(100,num("length",1200));
@@ -79,7 +80,8 @@
 
   function pulse(ctx,x0,y0,width,height,amp,color){
     ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.beginPath();
-    for(let x=-width*2.8;x<=width*2.8;x+=2){const g=Math.exp(-.5*(x/width)**2);const y=y0-height*amp*g;const px=x0+x;px===x0-width*2.8?ctx.moveTo(px,y):ctx.lineTo(px,y);}ctx.stroke();
+    let first=true;
+    for(let x=-width*2.8;x<=width*2.8;x+=2){const g=Math.exp(-.5*(x/width)**2);const y=y0-height*amp*g;const px=x0+x;if(first){ctx.moveTo(px,y);first=false;}else ctx.lineTo(px,y);}ctx.stroke();
   }
 
   function draw(progress=null){
@@ -88,21 +90,17 @@
     const r=c.getBoundingClientRect();if(!r.width)return;const d=Math.min(devicePixelRatio||1,1.6),w=r.width,h=r.height||330;
     const W=Math.round(w*d),H=Math.round(h*d);if(c.width!==W||c.height!==H){c.width=W;c.height=H;}
     const x=c.getContext("2d");x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,w,h);x.fillStyle="#06111d";x.fillRect(0,0,w,h);
-    // fibre cross-section
     const left=34,right=w-34,top=42,bottom=148,coreTop=67,coreBottom=123;
     x.fillStyle="#153653";x.fillRect(left,top,right-left,bottom-top);x.fillStyle="#08233a";x.fillRect(left,coreTop,right-left,coreBottom-coreTop);
     x.fillStyle="#9db5c9";x.font="700 11px system-ui";x.fillText("cladding (lower n)",left+8,top+16);x.fillText("core (higher n)",left+8,coreTop+17);
     const rayColors=["#67c7ff","#9a86ff","#63d9a4"];const rays=Math.min(3,Math.max(1,Math.round(m.modes/2)));
     for(let q=0;q<rays;q++){x.strokeStyle=rayColors[q];x.lineWidth=2;x.beginPath();let px=left+8,py=(coreTop+coreBottom)/2+(q-1)*5;x.moveTo(px,py);const bounces=q+1;for(let j=1;j<=bounces*2+1;j++){px=left+8+(right-left-16)*j/(bounces*2+1);py=j%2?coreTop+5+q*3:coreBottom-5-q*3;x.lineTo(px,py);}x.stroke();}
     if(progress!==null){const px=left+8+(right-left-16)*progress;x.fillStyle="#ffd56a";x.shadowColor="#ffd56a";x.shadowBlur=12;x.beginPath();x.arc(px,(coreTop+coreBottom)/2,7,0,Math.PI*2);x.fill();x.shadowBlur=0;}
-    // pulse graphs
-    const yBase=h-62,graphTop=184; x.strokeStyle="#29445d";x.lineWidth=1;x.beginPath();x.moveTo(28,yBase);x.lineTo(w-28,yBase);x.stroke();
+    const yBase=h-62,graphTop=184;x.strokeStyle="#29445d";x.lineWidth=1;x.beginPath();x.moveTo(28,yBase);x.lineTo(w-28,yBase);x.stroke();
     x.fillStyle="#9db5c9";x.font="700 11px system-ui";x.fillText("INPUT",32,graphTop);x.fillText("OUTPUT",w*.56,graphTop);
     const inX=w*.25,outX=w*.75;const scale=2.1;const inWidth=clamp(m.inputWidth*scale,10,60),outWidth=clamp(m.outputWidth*scale,10,95);
     pulse(x,inX,yBase,inWidth,78,1,"#63d9a4");pulse(x,outX,yBase,outWidth,78,Math.sqrt(m.powerFrac),"#ffd56a");
-    // bit period marker
     const marker=clamp(m.bitPeriod*1.6,28,150);x.strokeStyle="rgba(103,199,255,.6)";x.setLineDash([5,4]);x.beginPath();x.moveTo(outX-marker/2,yBase+8);x.lineTo(outX+marker/2,yBase+8);x.stroke();x.setLineDash([]);x.fillStyle="#9db5c9";x.font="600 10px system-ui";x.fillText("one bit period",outX-marker/2,yBase+24);
-    // metrics
     const metrics=$("#fibreMetricsV13");if(metrics)metrics.innerHTML=[
       ["Input width",`${fmt(m.inputWidth,0)} ns`],["Output width",`${fmt(m.outputWidth,1)} ns`],["Modal broadening",`${fmt(m.modalBroad,1)} ns`],["Material broadening",`${fmt(m.materialBroad,1)} ns`],["Loss",`${fmt(m.lossDb,2)} dB`],["Power remaining",`${fmt(m.powerFrac*100,1)}%`],["Bit period",`${fmt(m.bitPeriod,1)} ns`],["Pulse quality",m.quality]
     ].map(([a,b])=>`<div><strong>${b}</strong><span>${a}</span></div>`).join("");
@@ -113,10 +111,10 @@
   function onDocumentClick(e){
     const tab=e.target.closest?.("[data-studio]");if(tab)setTimeout(()=>{if(tab.dataset.studio==="fibre")ensure();else cancelAnimationFrame(animId);},70);
   }
-  function onInput(e){if(studioIsFibre()&&e.target.closest?.("#studioBody")&&e.target.matches("[data-studio-control]"))requestAnimationFrame(draw);}
+  function onInput(e){if(studioIsFibre()&&e.target.closest?.("#studioBody")&&(e.target.matches("[data-studio-control]")||e.target.matches("#modalToggle,#materialToggle")))requestAnimationFrame(()=>draw());}
   document.addEventListener("click",onDocumentClick);
   document.addEventListener("input",onInput);
   document.addEventListener("change",onInput);
-  window.addEventListener("resize",()=>{if(studioIsFibre())requestAnimationFrame(draw);});
+  window.addEventListener("resize",()=>{if(studioIsFibre())requestAnimationFrame(()=>draw());});
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>setTimeout(ensure,450));else setTimeout(ensure,450);
 })();
