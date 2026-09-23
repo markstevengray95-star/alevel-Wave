@@ -64,7 +64,7 @@
     addCss("learning-v6.css?v=6","learningV6Css");
     addCss("visual-polish-v7.css?v=7","visualPolishV7Css");
     addCss("simulation-hud-v7.css?v=7","simulationHudV7Css");
-    addCss("fibre-pulse-final-v13.css?v=13","fibrePulseFinalV13Css");
+    addCss("fibre-pulse-final-v13.css?v=14","fibrePulseFinalV13Css");
     const load=(src,id)=>{if(document.getElementById(id))return;const s=document.createElement("script");s.src=src;s.id=id;s.defer=true;document.body.appendChild(s);};
     load("textbook-expansion.js?v=2","textbookExpansionScript");
     load("simulation-upgrades-v2.js?v=2","simulationUpgradeScript");
@@ -79,7 +79,7 @@
     load("simulation-performance-v6.js?v=7","simulationPerformanceV6Script");
     load("lesson-expansion-v7.js?v=7","lessonExpansionV7Script");
     load("simulation-visuals-v7.js?v=8","simulationVisualsV7Script");
-    load("fibre-pulse-final-v13.js?v=13","fibrePulseFinalV13Script");
+    load("fibre-pulse-final-v13.js?v=14","fibrePulseFinalV13Script");
   }
 
   function init(){addPracticalLinks();addSimulationBridge();addTeacherSimulationShortcuts();addMeasurementGuide();observeDynamic();enhanceInterferenceContext();loadDetailUpgrades();}
