@@ -27,10 +27,13 @@ jobs:
           node --check simulation-upgrades-v2.js
           node --check simulation-upgrades-v3.js
           node --check simulation-upgrades-v4.js
+          node --check simulation-performance-v6.js
           node --check textbook-interactives-v3.js
           node --check question-engine-v3.js
           node --check extended-response-v4.js
           node --check topic-end-practice-v5.js
+          node --check equation-coach-v6.js
+          node --check learning-depth-v6.js
           node --check sw.js
       - name: Check required app files
         run: |
@@ -41,10 +44,14 @@ jobs:
           test -f course-upgrades-v3.css
           test -f extended-response-v4.css
           test -f learning-upgrades-v5.css
+          test -f learning-v6.css
           test -f simulation-upgrades-v3.js
           test -f simulation-upgrades-v4.js
+          test -f simulation-performance-v6.js
           test -f textbook-interactives-v3.js
           test -f question-engine-v3.js
           test -f extended-response-v4.js
           test -f topic-end-practice-v5.js
+          test -f equation-coach-v6.js
+          test -f learning-depth-v6.js
           test -f manifest.webmanifest
