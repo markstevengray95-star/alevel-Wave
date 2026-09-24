@@ -1,7 +1,7 @@
 (()=>{
 'use strict';
 const $=(s,r=document)=>r.querySelector(s);
-let c,ctx,W=760,H=330,DPR=1,yaw=-.62,pitch=.38,zoom=1,time=0,last=0,lastFrame=0,drag=false,px=0,py=0;
+let c,ctx,W=760,H=330,DPR=1,yaw=-.62,pitch=.38,zoom=1,time=0,last=0,lastFrame=0,drag=false,px=0,py=0,globalBound=false;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const mode=()=>$('#studioTabs .studio-tab.active')?.dataset.studio||'measure';
 const val=(k,f)=>{const e=$(`#studioBody [data-studio-control='${k}']`),n=Number(e?.value);return Number.isFinite(n)?n:f;};
@@ -25,7 +25,13 @@ function fibre(){const len=val('length',1200),modes=Math.round(val('modes',5)),s
 function resonance(){const L=val('L',1.2),T=val('T',18),mu=val('mu',.005),drive=val('drive',50),damping=val('damping',.8),speed=Math.sqrt(T/mu),f1=speed/(2*L),n=Math.max(1,Math.min(8,Math.round(drive/f1))),fn=n*f1,det=Math.abs(drive-fn),amp=.25+clamp(1/Math.sqrt(det*det+damping*damping),0,1.2)*.7;line([-3,0,0],[3,0,0],'#7890aa',2,.6);const p=[];for(let X=-3;X<=3;X+=.04)p.push([X,amp*Math.sin(n*Math.PI*(X+3)/6)*Math.cos(time*drive*.14),0]);path(p,'#67c7ff',3);for(let i=0;i<=n;i++)dot([-3+6*i/n,0,0],4,'#ffbd66',i===0||i===n?'support':'node');caption('3D resonance apparatus',`The driven string is shown near harmonic n=${n}; resonance strengthens as the drive frequency approaches ${fn.toFixed(1)} Hz.`)}
 function draw(){if(!ctx||!c)return;clear();const id=mode();({measure,interference,young,diffraction,spectrometer,fibre,resonance}[id]||measure)()}
 function camera(k){if(k==='front'){yaw=0;pitch=0;zoom=1}else if(k==='top'){yaw=0;pitch=-1.2;zoom=.92}else{yaw=-.62;pitch=.38;zoom=1}draw()}
-function bind(){c.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY;c.setPointerCapture?.(e.pointerId)});c.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-px,dy=e.clientY-py;px=e.clientX;py=e.clientY;yaw+=dx*.008;pitch=clamp(pitch+dy*.007,-1.25,1.25);draw()});c.addEventListener('pointerup',()=>drag=false);c.addEventListener('pointercancel',()=>drag=false);c.addEventListener('wheel',e=>{e.preventDefault();zoom=clamp(zoom*(e.deltaY>0?.92:1.08),.62,1.8);draw()},{passive:false});document.addEventListener('input',e=>{if(e.target.closest?.('#studioBody'))requestAnimationFrame(draw)});document.addEventListener('change',e=>{if(e.target.closest?.('#studioBody'))requestAnimationFrame(draw)})}
+function bind(){
+  c.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY;c.setPointerCapture?.(e.pointerId)});
+  c.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-px,dy=e.clientY-py;px=e.clientX;py=e.clientY;yaw+=dx*.008;pitch=clamp(pitch+dy*.007,-1.25,1.25);draw()});
+  c.addEventListener('pointerup',()=>drag=false);c.addEventListener('pointercancel',()=>drag=false);
+  c.addEventListener('wheel',e=>{e.preventDefault();zoom=clamp(zoom*(e.deltaY>0?0.92:1.08),.62,1.8);draw()},{passive:false});
+  if(!globalBound){globalBound=true;document.addEventListener('input',e=>{if(e.target.closest?.('#studioBody'))requestAnimationFrame(draw)});document.addEventListener('change',e=>{if(e.target.closest?.('#studioBody'))requestAnimationFrame(draw)})}
+}
 function resize(){if(!c)return;const r=c.getBoundingClientRect();if(!r.width)return;DPR=Math.min(devicePixelRatio||1,1.6);W=r.width;H=r.height;c.width=Math.round(W*DPR);c.height=Math.round(H*DPR);ctx=c.getContext('2d');ctx.setTransform(DPR,0,0,DPR,0,0);draw()}
 function ensure(){const body=$('#studioBody'),stage=body?.querySelector('.studio-stage'),id=mode();if(!body||!stage||id==='investigations'||body.querySelector('#studio3DV18'))return;const box=document.createElement('section');box.id='studio3DV18';box.className='studio-3d-v18';box.innerHTML='<div class="studio-3d-head-v18"><div><span class="eyebrow">Linked spatial model</span><h4>3D apparatus view</h4><p class="muted small">Rotate the apparatus, then use the measurement surface above for exact readings.</p></div><span class="mini-badge good">3D</span></div><div class="studio-3d-view-v18"><canvas id="studio3DCanvasV18" class="studio-3d-canvas-v18"></canvas><div class="studio-3d-controls-v18"><button data-studio3dcam="reset">Reset</button><button data-studio3dcam="front">Front</button><button data-studio3dcam="top">Top</button></div></div><div class="studio-3d-caption-v18" id="studio3DCaptionV18"></div>';stage.appendChild(box);c=$('#studio3DCanvasV18');ctx=c.getContext('2d');bind();box.querySelectorAll('[data-studio3dcam]').forEach(b=>b.onclick=()=>camera(b.dataset.studio3dcam));resize()}
 let queued=false;function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;ensure()})}
