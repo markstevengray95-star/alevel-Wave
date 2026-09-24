@@ -65,7 +65,7 @@
     addCss("visual-polish-v7.css?v=7","visualPolishV7Css");
     addCss("simulation-hud-v7.css?v=7","simulationHudV7Css");
     addCss("fibre-pulse-final-v13.css?v=14","fibrePulseFinalV13Css");
-    addCss("lesson-depth-v15.css?v=15","lessonDepthV15Css");
+    addCss("lesson-depth-v15.css?v=16","lessonDepthV16Css");
     addCss("simulations-3d-v15.css?v=16","simulations3DV16Css");
     const load=(src,id)=>{if(document.getElementById(id))return;const s=document.createElement("script");s.src=src;s.id=id;s.defer=true;document.body.appendChild(s);};
     load("textbook-expansion.js?v=2","textbookExpansionScript");
@@ -82,7 +82,7 @@
     load("lesson-expansion-v7.js?v=7","lessonExpansionV7Script");
     load("simulation-visuals-v7.js?v=8","simulationVisualsV7Script");
     load("fibre-pulse-final-v13.js?v=14","fibrePulseFinalV13Script");
-    load("lesson-depth-v15.js?v=15","lessonDepthV15Script");
+    load("lesson-depth-v16.js?v=16","lessonDepthV16Script");
     load("simulations-3d-v16.js?v=16","simulations3DV16Script");
   }
 
