@@ -30,7 +30,7 @@ jobs:
           node --check simulation-performance-v6.js
           node --check simulation-visuals-v7.js
           node --check fibre-pulse-final-v13.js
-          node --check lesson-depth-v15.js
+          node --check lesson-depth-v16.js
           node --check simulations-3d-v16.js
           node --check textbook-interactives-v3.js
           node --check question-engine-v3.js
@@ -60,7 +60,7 @@ jobs:
           test -f simulation-performance-v6.js
           test -f simulation-visuals-v7.js
           test -f fibre-pulse-final-v13.js
-          test -f lesson-depth-v15.js
+          test -f lesson-depth-v16.js
           test -f simulations-3d-v16.js
           test -f textbook-interactives-v3.js
           test -f question-engine-v3.js
