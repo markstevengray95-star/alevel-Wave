@@ -30,6 +30,8 @@ jobs:
           node --check simulation-performance-v6.js
           node --check simulation-visuals-v7.js
           node --check fibre-pulse-final-v13.js
+          node --check lesson-depth-v15.js
+          node --check simulations-3d-v16.js
           node --check textbook-interactives-v3.js
           node --check question-engine-v3.js
           node --check extended-response-v4.js
@@ -51,11 +53,15 @@ jobs:
           test -f visual-polish-v7.css
           test -f simulation-hud-v7.css
           test -f fibre-pulse-final-v13.css
+          test -f lesson-depth-v15.css
+          test -f simulations-3d-v15.css
           test -f simulation-upgrades-v3.js
           test -f simulation-upgrades-v4.js
           test -f simulation-performance-v6.js
           test -f simulation-visuals-v7.js
           test -f fibre-pulse-final-v13.js
+          test -f lesson-depth-v15.js
+          test -f simulations-3d-v16.js
           test -f textbook-interactives-v3.js
           test -f question-engine-v3.js
           test -f extended-response-v4.js
