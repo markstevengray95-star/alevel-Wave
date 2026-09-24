@@ -15,7 +15,7 @@
 
   function addSimulationBridge(){
     const side=$(".lab-side");if(!side||$("#advancedLabBridge"))return;
-    side.insertAdjacentHTML("beforeend",'<article class="panel learning-box checkpoint-box" id="advancedLabBridge"><h3>Take it further</h3><p>Switch from the rotatable 3D concept model to a measurement-led investigation with draggable instruments, oscilloscope traces and hidden-answer missions.</p><button class="button primary" id="openMatchingAdvanced">Open matching Advanced Studio lab</button></article>');
+    side.insertAdjacentHTML("beforeend",'<article class="panel learning-box checkpoint-box" id="advancedLabBridge"><h3>Take it further</h3><p>Switch from the rotatable 3D concept model to a measurement-led investigation with draggable instruments, oscilloscope traces, linked 3D apparatus and hidden-answer missions.</p><button class="button primary" id="openMatchingAdvanced">Open matching Advanced Studio lab</button></article>');
     $("#openMatchingAdvanced").onclick=()=>{
       const id=$(".sim-tab.active")?.dataset.sim||"progressive";
       const map={progressive:"measure",polarisation:"measure",standing:"resonance",interference:"interference",doubleSlit:"young",diffraction:"diffraction",grating:"spectrometer",refraction:"measure",fibre:"fibre"};
@@ -67,6 +67,7 @@
     addCss("fibre-pulse-final-v13.css?v=14","fibrePulseFinalV13Css");
     addCss("lesson-depth-v15.css?v=16","lessonDepthV16Css");
     addCss("simulations-3d-v15.css?v=16","simulations3DV16Css");
+    addCss("studio-3d-v18.css?v=18","studio3DV18Css");
     const load=(src,id)=>{if(document.getElementById(id))return;const s=document.createElement("script");s.src=src;s.id=id;s.defer=true;document.body.appendChild(s);};
     load("textbook-expansion.js?v=2","textbookExpansionScript");
     load("simulation-upgrades-v2.js?v=2","simulationUpgradeScript");
@@ -84,6 +85,7 @@
     load("fibre-pulse-final-v13.js?v=14","fibrePulseFinalV13Script");
     load("lesson-depth-v16.js?v=16","lessonDepthV16Script");
     load("simulations-3d-v16.js?v=16","simulations3DV16Script");
+    load("studio-3d-v18.js?v=18","studio3DV18Script");
   }
 
   function init(){addPracticalLinks();addSimulationBridge();addTeacherSimulationShortcuts();addMeasurementGuide();observeDynamic();enhanceInterferenceContext();loadDetailUpgrades();}
